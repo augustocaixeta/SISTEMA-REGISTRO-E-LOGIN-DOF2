@@ -1,20 +1,20 @@
-#include a_samp
-#include dof2
+#include <a_samp>
+#include <dof2>
 
 // -----------------------------------------------------------------------------
 
-#define MAX_PASSWORD                16          // Máximo de caracteres da senha
-#define MIN_PASSWORD                4           // Mínimo de caracteres da senha
-#define MAX_ATTEMPS_PASSWORD        3           // Tentativas de acertar a senha
+#define MAX_PASSWORD                		16  	// Máx. caracteres da senha
+#define MIN_PASSWORD                		4   	// Mín. caracteres da senha
+#define MAX_ATTEMPS_PASSWORD        		3   	// Tentativas de acertar a senha
 
-#define NOVATO_SKIN_MASCULINA       60
-#define NOVATO_SKIN_FEMININA        56
-#define NOVATO_DINHEIRO_INICIAL     1000
+#define BEGINNER_SKIN_MALE       			60
+#define BEGINNER_SKIN_FEMALE        		56
+#define BEGINNER_START_MONEY     			1000
 
-#define NOVATO_SPAWN_X              1958.3783
-#define NOVATO_SPAWN_Y              1343.1572
-#define NOVATO_SPAWN_Z              15.3746
-#define NOVATO_SPAWN_A              270.0000
+#define BEGINNER_START_X              		1958.3783
+#define BEGINNER_START_Y              		1343.1572
+#define BEGINNER_START_Z              		15.3746
+#define BEGINNER_START_A              		270.0000
 
 // -----------------------------------------------------------------------------
 
@@ -41,6 +41,16 @@ enum Admin (+=1)
 	PLAYER_ADMIN_BOSS
 };
 
+enum Job (+=1)
+{
+	INVALID_JOB_ID = -1,
+
+	PIZZABOY_JOB_ID,
+	TRUCKER_JOB_ID,
+	ELECTRICIAN_JOB_ID,
+	POLICE_JOB_ID
+};
+
 enum E_PLAYER_DATA
 {
     E_PLAYER_PASSWORD[MAX_PASSWORD],
@@ -48,6 +58,7 @@ enum E_PLAYER_DATA
 
     Gender:E_PLAYER_GENDER,
     Admin:E_PLAYER_ADMIN,
+    Job:E_PLAYER_JOB,
 
     E_PLAYER_HUNGER,
     E_PLAYER_THIRST,
@@ -170,13 +181,15 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 
                 DOF2::SetInt(formatFile(playerid), "gender", _:(player[playerid][E_PLAYER_GENDER] = PLAYER_GENDER_NONE));
                 DOF2::SetInt(formatFile(playerid), "admin", _:(player[playerid][E_PLAYER_ADMIN] = PLAYER_ADMIN_NONE));
+                DOF2::SetInt(formatFile(playerid), "job", _:(player[playerid][E_PLAYER_JOB] = INVALID_JOB_ID));
+
                 DOF2::SetInt(formatFile(playerid), "hunger", player[playerid][E_PLAYER_HUNGER] = 30);
                 DOF2::SetInt(formatFile(playerid), "thirst", player[playerid][E_PLAYER_THIRST] = 30);
 
-                DOF2::SetFloat(formatFile(playerid), "x", player[playerid][E_PLAYER_X] = NOVATO_SPAWN_X);
-                DOF2::SetFloat(formatFile(playerid), "y", player[playerid][E_PLAYER_Y] = NOVATO_SPAWN_Y);
-                DOF2::SetFloat(formatFile(playerid), "z", player[playerid][E_PLAYER_Z] = NOVATO_SPAWN_Z);
-                DOF2::SetFloat(formatFile(playerid), "a", player[playerid][E_PLAYER_A] = NOVATO_SPAWN_A);
+                DOF2::SetFloat(formatFile(playerid), "x", player[playerid][E_PLAYER_X] = BEGINNER_START_X);
+                DOF2::SetFloat(formatFile(playerid), "y", player[playerid][E_PLAYER_Y] = BEGINNER_START_Y);
+                DOF2::SetFloat(formatFile(playerid), "z", player[playerid][E_PLAYER_Z] = BEGINNER_START_Z);
+                DOF2::SetFloat(formatFile(playerid), "a", player[playerid][E_PLAYER_A] = BEGINNER_START_A);
                 DOF2::SaveFile();
 
                 // -------------------------------------------------------------
@@ -193,10 +206,10 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
             player[playerid][E_PLAYER_GENDER] = ((response) ? (PLAYER_GENDER_MALE) : (PLAYER_GENDER_FEMALE));
 
             TogglePlayerSpectating(playerid, false);
-            GivePlayerMoney(playerid, NOVATO_DINHEIRO_INICIAL);
+            GivePlayerMoney(playerid, BEGINNER_START_MONEY);
             SendClientMessage(playerid, -1, ((response) ? ("{98FB98}* {FFFFFF}Sexo definido como Masculino.") : ("{98FB98}* {FFFFFF}Sexo definido como Feminino.")));
 
-            SetSpawnInfo(playerid, NO_TEAM, ((response) ? (NOVATO_SKIN_MASCULINA) : (NOVATO_SKIN_FEMININA)), player[playerid][E_PLAYER_X], player[playerid][E_PLAYER_Y], player[playerid][E_PLAYER_Z], player[playerid][E_PLAYER_A], 0, 0, 0, 0, 0, 0);
+            SetSpawnInfo(playerid, NO_TEAM, ((response) ? (BEGINNER_SKIN_MALE) : (BEGINNER_SKIN_FEMALE)), player[playerid][E_PLAYER_X], player[playerid][E_PLAYER_Y], player[playerid][E_PLAYER_Z], player[playerid][E_PLAYER_A], 0, 0, 0, 0, 0, 0);
             SetCameraBehindPlayer(playerid);
             SpawnPlayer(playerid);
         }
@@ -224,6 +237,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 
                 player[playerid][E_PLAYER_GENDER] = Gender:DOF2::GetInt(formatFile(playerid), "gender");
                 player[playerid][E_PLAYER_ADMIN] = Admin:DOF2::GetInt(formatFile(playerid), "admin");
+                player[playerid][E_PLAYER_JOB] = Job:DOF2::GetInt(formatFile(playerid), "job");
+
                 player[playerid][E_PLAYER_HUNGER] = DOF2::GetInt(formatFile(playerid), "hunger");
                 player[playerid][E_PLAYER_THIRST] = DOF2::GetInt(formatFile(playerid), "thirst");
 
@@ -338,6 +353,8 @@ SavePlayerData(playerid)
 
             DOF2::SetInt(formatFile(playerid), "gender", _:player[playerid][E_PLAYER_GENDER]);
             DOF2::SetInt(formatFile(playerid), "admin", _:player[playerid][E_PLAYER_ADMIN]);
+            DOF2::SetInt(formatFile(playerid), "job", _:player[playerid][E_PLAYER_JOB]);
+
             DOF2::SetInt(formatFile(playerid), "hunger", player[playerid][E_PLAYER_HUNGER]);
             DOF2::SetInt(formatFile(playerid), "thirst", player[playerid][E_PLAYER_THIRST]);
 
@@ -363,6 +380,7 @@ ResetPlayerData(playerid)
 
     player[playerid][E_PLAYER_GENDER] = PLAYER_GENDER_NONE;
     player[playerid][E_PLAYER_ADMIN] = PLAYER_ADMIN_NONE;
+    player[playerid][E_PLAYER_JOB] = INVALID_JOB_ID;
 
     player[playerid][E_PLAYER_HUNGER] = player[playerid][E_PLAYER_THIRST] = player[playerid][E_PLAYER_ATTEMPS] = 0;
     player[playerid][E_PLAYER_X] = player[playerid][E_PLAYER_Y] = player[playerid][E_PLAYER_Z] = player[playerid][E_PLAYER_A] = 0.0;
