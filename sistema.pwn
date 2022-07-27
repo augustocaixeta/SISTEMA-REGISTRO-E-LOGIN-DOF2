@@ -27,24 +27,23 @@ enum
 
 enum Gender (+=1)
 {
-	PLAYER_GENDER_NONE,
-	PLAYER_GENDER_MALE,
-	PLAYER_GENDER_FEMALE
+	INVALID_GENDER_ID,
+	MALE_GENDER_ID,
+	FEMALE_GENDER_ID
 };
 
 enum Admin (+=1)
 {
-	PLAYER_ADMIN_NONE,
-	PLAYER_ADMIN_HELPER,
-	PLAYER_ADMIN_MOD,
-	PLAYER_ADMIN_MANAGER,
-	PLAYER_ADMIN_BOSS
+	INVALID_ADMIN_ID,
+	HELPER_ADMIN_ID,
+	MOD_ADMIN_ID,
+	MANAGER_ADMIN_ID,
+	BOSS_ADMIN_ID
 };
 
 enum Job (+=1)
 {
-	INVALID_JOB_ID = -1,
-
+	INVALID_JOB_ID,
 	PIZZABOY_JOB_ID,
 	TRUCKER_JOB_ID,
 	ELECTRICIAN_JOB_ID,
@@ -179,8 +178,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
                 DOF2::SetFloat(formatFile(playerid), "health", 100.0);
                 DOF2::SetFloat(formatFile(playerid), "armour", 0.0);
 
-                DOF2::SetInt(formatFile(playerid), "gender", _:(player[playerid][E_PLAYER_GENDER] = PLAYER_GENDER_NONE));
-                DOF2::SetInt(formatFile(playerid), "admin", _:(player[playerid][E_PLAYER_ADMIN] = PLAYER_ADMIN_NONE));
+                DOF2::SetInt(formatFile(playerid), "gender", _:(player[playerid][E_PLAYER_GENDER] = INVALID_GENDER_ID));
+                DOF2::SetInt(formatFile(playerid), "admin", _:(player[playerid][E_PLAYER_ADMIN] = INVALID_ADMIN_ID));
                 DOF2::SetInt(formatFile(playerid), "job", _:(player[playerid][E_PLAYER_JOB] = INVALID_JOB_ID));
 
                 DOF2::SetInt(formatFile(playerid), "hunger", player[playerid][E_PLAYER_HUNGER] = 30);
@@ -203,7 +202,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
             player[playerid][E_PLAYER_LOGGED] = true;
             player[playerid][E_PLAYER_SPAWNED] = true;
             player[playerid][E_PLAYER_REGISTRED] = true;
-            player[playerid][E_PLAYER_GENDER] = ((response) ? (PLAYER_GENDER_MALE) : (PLAYER_GENDER_FEMALE));
+            player[playerid][E_PLAYER_GENDER] = ((response) ? (MALE_GENDER_ID) : (FEMALE_GENDER_ID));
 
             TogglePlayerSpectating(playerid, false);
             GivePlayerMoney(playerid, BEGINNER_START_MONEY);
@@ -378,8 +377,8 @@ ResetPlayerData(playerid)
     SetPlayerHealth(playerid, 100.0);
     SetPlayerArmour(playerid, 0.0);
 
-    player[playerid][E_PLAYER_GENDER] = PLAYER_GENDER_NONE;
-    player[playerid][E_PLAYER_ADMIN] = PLAYER_ADMIN_NONE;
+    player[playerid][E_PLAYER_GENDER] = INVALID_GENDER_ID;
+    player[playerid][E_PLAYER_ADMIN] = INVALID_ADMIN_ID;
     player[playerid][E_PLAYER_JOB] = INVALID_JOB_ID;
 
     player[playerid][E_PLAYER_HUNGER] = player[playerid][E_PLAYER_THIRST] = player[playerid][E_PLAYER_ATTEMPS] = 0;
