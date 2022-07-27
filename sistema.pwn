@@ -32,15 +32,25 @@ enum Gender (+=1)
 	PLAYER_GENDER_FEMALE
 };
 
+enum Admin (+=1)
+{
+	PLAYER_ADMIN_NONE,
+	PLAYER_ADMIN_HELPER,
+	PLAYER_ADMIN_MOD,
+	PLAYER_ADMIN_MANAGER,
+	PLAYER_ADMIN_BOSS
+};
+
 enum E_PLAYER_DATA
 {
     E_PLAYER_PASSWORD[MAX_PASSWORD],
     E_PLAYER_LASTLOGIN[24],
 
     Gender:E_PLAYER_GENDER,
+    Admin:E_PLAYER_ADMIN,
+
     E_PLAYER_HUNGER,
     E_PLAYER_THIRST,
-    E_PLAYER_ADMIN,
     E_PLAYER_ATTEMPS,
 
     bool:E_PLAYER_LOGGED,
@@ -159,9 +169,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
                 DOF2::SetFloat(formatFile(playerid), "armour", 0.0);
 
                 DOF2::SetInt(formatFile(playerid), "gender", _:(player[playerid][E_PLAYER_GENDER] = PLAYER_GENDER_NONE));
+                DOF2::SetInt(formatFile(playerid), "admin", _:(player[playerid][E_PLAYER_ADMIN] = PLAYER_ADMIN_NONE));
                 DOF2::SetInt(formatFile(playerid), "hunger", player[playerid][E_PLAYER_HUNGER] = 30);
                 DOF2::SetInt(formatFile(playerid), "thirst", player[playerid][E_PLAYER_THIRST] = 30);
-                DOF2::SetInt(formatFile(playerid), "admin", player[playerid][E_PLAYER_ADMIN] = 0);
 
                 DOF2::SetFloat(formatFile(playerid), "x", player[playerid][E_PLAYER_X] = NOVATO_SPAWN_X);
                 DOF2::SetFloat(formatFile(playerid), "y", player[playerid][E_PLAYER_Y] = NOVATO_SPAWN_Y);
@@ -180,7 +190,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
             player[playerid][E_PLAYER_LOGGED] = true;
             player[playerid][E_PLAYER_SPAWNED] = true;
             player[playerid][E_PLAYER_REGISTRED] = true;
-            player[playerid][E_PLAYER_GENDER] = ((response) ? (PLAYER_GENDER_MALE): (PLAYER_GENDER_FEMALE));
+            player[playerid][E_PLAYER_GENDER] = ((response) ? (PLAYER_GENDER_MALE) : (PLAYER_GENDER_FEMALE));
 
             TogglePlayerSpectating(playerid, false);
             GivePlayerMoney(playerid, NOVATO_DINHEIRO_INICIAL);
@@ -213,9 +223,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
                 SetPlayerArmour(playerid, DOF2::GetFloat(formatFile(playerid), "armour"));
 
                 player[playerid][E_PLAYER_GENDER] = Gender:DOF2::GetInt(formatFile(playerid), "gender");
+                player[playerid][E_PLAYER_ADMIN] = Admin:DOF2::GetInt(formatFile(playerid), "admin");
                 player[playerid][E_PLAYER_HUNGER] = DOF2::GetInt(formatFile(playerid), "hunger");
                 player[playerid][E_PLAYER_THIRST] = DOF2::GetInt(formatFile(playerid), "thirst");
-                player[playerid][E_PLAYER_ADMIN] = DOF2::GetInt(formatFile(playerid), "admin");
 
                 player[playerid][E_PLAYER_X] = DOF2::GetFloat(formatFile(playerid), "x");
                 player[playerid][E_PLAYER_Y] = DOF2::GetFloat(formatFile(playerid), "y");
@@ -327,9 +337,9 @@ SavePlayerData(playerid)
             DOF2::SetFloat(formatFile(playerid), "armour", formatArmour(playerid));
 
             DOF2::SetInt(formatFile(playerid), "gender", _:player[playerid][E_PLAYER_GENDER]);
+            DOF2::SetInt(formatFile(playerid), "admin", _:player[playerid][E_PLAYER_ADMIN]);
             DOF2::SetInt(formatFile(playerid), "hunger", player[playerid][E_PLAYER_HUNGER]);
             DOF2::SetInt(formatFile(playerid), "thirst", player[playerid][E_PLAYER_THIRST]);
-            DOF2::SetInt(formatFile(playerid), "admin", player[playerid][E_PLAYER_ADMIN]);
 
             DOF2::SetFloat(formatFile(playerid), "x", player[playerid][E_PLAYER_X]);
             DOF2::SetFloat(formatFile(playerid), "y", player[playerid][E_PLAYER_Y]);
@@ -352,8 +362,9 @@ ResetPlayerData(playerid)
     SetPlayerArmour(playerid, 0.0);
 
     player[playerid][E_PLAYER_GENDER] = PLAYER_GENDER_NONE;
+    player[playerid][E_PLAYER_ADMIN] = PLAYER_ADMIN_NONE;
 
-    player[playerid][E_PLAYER_HUNGER] = player[playerid][E_PLAYER_THIRST] = player[playerid][E_PLAYER_ADMIN] = player[playerid][E_PLAYER_ATTEMPS] = 0;
+    player[playerid][E_PLAYER_HUNGER] = player[playerid][E_PLAYER_THIRST] = player[playerid][E_PLAYER_ATTEMPS] = 0;
     player[playerid][E_PLAYER_X] = player[playerid][E_PLAYER_Y] = player[playerid][E_PLAYER_Z] = player[playerid][E_PLAYER_A] = 0.0;
     player[playerid][E_PLAYER_LOGGED] = player[playerid][E_PLAYER_SPAWNED] = player[playerid][E_PLAYER_REGISTRED] = false;
 }
