@@ -242,7 +242,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
                 new dialog[90];
                 format(dialog, sizeof(dialog), "{FFFFFF}Insira sua senha para conectar-se:\n\n{FF0000}* Senha incorreta (%i/%i).", player[playerid][E_PLAYER_ATTEMPS], MAX_ATTEMPS_PASSWORD);
                 ShowPlayerDialog(playerid, DIALOG_PLAYER_CONNECT, DIALOG_STYLE_PASSWORD, "Conectando", dialog, "Conectar", "Sair");
-			}
+            }
         }
     }
     return 1;
