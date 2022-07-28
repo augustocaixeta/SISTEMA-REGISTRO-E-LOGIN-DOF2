@@ -1,3 +1,9 @@
+/*
+
+    * Não testado as novas mudanças;
+
+*/
+
 #include <a_samp>
 #include <a_omp>
 #include <dof2>
