@@ -1,4 +1,5 @@
 #include <a_samp>
+#include <a_omp>
 #include <dof2>
 
 // -----------------------------------------------------------------------------
@@ -45,9 +46,9 @@ enum Job (+=1)
 {
     INVALID_JOB_ID,
     PIZZABOY_JOB_ID,
-    GARBAGE_JOB_ID,
     TRUCKER_JOB_ID,
-    ELECTRICIAN_JOB_ID
+    ELECTRICIAN_JOB_ID,
+    POLICE_JOB_ID
 };
 
 enum E_PLAYER_DATA
@@ -64,8 +65,6 @@ enum E_PLAYER_DATA
     E_PLAYER_ATTEMPS,
 
     bool:E_PLAYER_LOGGED,
-    bool:E_PLAYER_SPAWNED,
-    bool:E_PLAYER_REGISTRED,
 
     Float:E_PLAYER_X,
     Float:E_PLAYER_Y,
@@ -73,7 +72,7 @@ enum E_PLAYER_DATA
     Float:E_PLAYER_A
 };
 
-new player[MAX_PLAYERS][E_PLAYER_DATA];
+static player[MAX_PLAYERS][E_PLAYER_DATA];
 
 main(){}
 
@@ -92,8 +91,6 @@ public OnPlayerRequestClass(playerid, classid)
         InterpolateCameraPos(playerid, 2118.152343, 2142.547363, 43.101249, 2290.450195, 2143.153808, 36.116157, 7500);
         InterpolateCameraLookAt(playerid, 2123.133056, 2142.632324, 42.669498, 2295.448242, 2143.184570, 35.975551, 7500);
 
-        // ---------------------------------------------------------------------
-
         if(!DOF2::FileExists(formatFile(playerid)))
             ShowPlayerDialog(playerid, DIALOG_PLAYER_REGISTER, DIALOG_STYLE_PASSWORD, "Cadastro", "{FFFFFF}Insira uma senha para cadastrar-se:", "Cadastrar", "Sair");
         else
@@ -104,29 +101,11 @@ public OnPlayerRequestClass(playerid, classid)
 
 public OnPlayerSpawn(playerid)
 {
-    if(player[playerid][E_PLAYER_SPAWNED])
+    if(!IsPlayerSpawned(playerid))
     {
-        if(player[playerid][E_PLAYER_REGISTRED])
-        {
-            new string[110];
-            ClearLines(playerid, 50);
-            player[playerid][E_PLAYER_SPAWNED] = false;
-            player[playerid][E_PLAYER_REGISTRED] = false;
-
-            format(string, sizeof(string), "{98FB98}* {FFFFFF}Bem-vindo(a) {98FB98}%s{FFFFFF}, pela primeira vez ao nosso servidor.", formatName(playerid));
-            SendClientMessage(playerid, -1, string);
-            SendClientMessage(playerid, -1, "{98FB98}* {FFFFFF}Caso tenha dúvidas e precisar de ajuda use os comandos {98FB98}/ajuda {FFFFFF}e {98FB98}/comandos{FFFFFF}.");
-        }
-        else
-        {
-            new string[135];
-            ClearLines(playerid, 50);
-            player[playerid][E_PLAYER_SPAWNED] = false;
-
-            format(string, sizeof(string), "{98FB98}* {FFFFFF}Olá {98FB98}%s{FFFFFF}, seu último login no servidor foi: {98FB98}%s{FFFFFF}.", formatName(playerid), player[playerid][E_PLAYER_LASTLOGIN]);
-            SendClientMessage(playerid, -1, string);
-            SendClientMessage(playerid, -1, "{98FB98}* {FFFFFF}Caso tenha dúvidas e precisar de ajuda use os comandos {98FB98}/ajuda {FFFFFF}e {98FB98}/comandos{FFFFFF}.");
-        }
+    	ClearLines(playerid, 50);
+        SendClientMessagef(playerid, -1, "{98FB98}* {FFFFFF}Olá {98FB98}%s{FFFFFF}, seu último login no servidor foi: {98FB98}%s{FFFFFF}.", formatName(playerid), player[playerid][E_PLAYER_LASTLOGIN]);
+        SendClientMessage(playerid, -1, "{98FB98}* {FFFFFF}Caso tenha dúvidas e precisar de ajuda use os comandos {98FB98}/ajuda {FFFFFF}e {98FB98}/comandos{FFFFFF}.");
     }
     return 1;
 }
@@ -199,14 +178,14 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
         }
         case DIALOG_PLAYER_GENDER:
         {
-            player[playerid][E_PLAYER_LOGGED] = true;
-            player[playerid][E_PLAYER_SPAWNED] = true;
-            player[playerid][E_PLAYER_REGISTRED] = true;
-            player[playerid][E_PLAYER_GENDER] = ((response) ? (MALE_GENDER_ID) : (FEMALE_GENDER_ID));
+            ClearLines(playerid, 50);
+            SendClientMessagef(playerid, -1, "{98FB98}* {FFFFFF}Bem-vindo(a) {98FB98}%s{FFFFFF}, pela primeira vez ao nosso servidor.", formatName(playerid));
+            SendClientMessage(playerid, -1, "{98FB98}* {FFFFFF}Caso tenha dúvidas e precisar de ajuda use os comandos {98FB98}/ajuda {FFFFFF}e {98FB98}/comandos{FFFFFF}.");
 
+            SetPlayerLogged(playerid, true);
             TogglePlayerSpectating(playerid, false);
             GivePlayerMoney(playerid, BEGINNER_START_MONEY);
-            SendClientMessage(playerid, -1, ((response) ? ("{98FB98}* {FFFFFF}Sexo definido como Masculino.") : ("{98FB98}* {FFFFFF}Sexo definido como Feminino.")));
+            SetPlayerGender(playerid, ((response) ? (MALE_GENDER_ID) : (FEMALE_GENDER_ID)));
 
             SetSpawnInfo(playerid, NO_TEAM, ((response) ? (BEGINNER_SKIN_MALE) : (BEGINNER_SKIN_FEMALE)), player[playerid][E_PLAYER_X], player[playerid][E_PLAYER_Y], player[playerid][E_PLAYER_Z], player[playerid][E_PLAYER_A], 0, 0, 0, 0, 0, 0);
             SetCameraBehindPlayer(playerid);
@@ -246,30 +225,36 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
                 player[playerid][E_PLAYER_Z] = DOF2::GetFloat(formatFile(playerid), "z");
                 player[playerid][E_PLAYER_A] = DOF2::GetFloat(formatFile(playerid), "a");
 
-                player[playerid][E_PLAYER_LOGGED] = true;
-                player[playerid][E_PLAYER_SPAWNED] = true;
-                SendClientMessage(playerid, -1, "{98FB98}* {FFFFFF}Entrada efetuada com sucesso.");
+                SetPlayerLogged(playerid, true);
+                TogglePlayerSpectating(playerid, false);
 
                 SetSpawnInfo(playerid, NO_TEAM, GetPlayerSkin(playerid), player[playerid][E_PLAYER_X], player[playerid][E_PLAYER_Y], player[playerid][E_PLAYER_Z], player[playerid][E_PLAYER_A], 0, 0, 0, 0, 0, 0);
-                TogglePlayerSpectating(playerid, false);
                 SetCameraBehindPlayer(playerid);
                 SpawnPlayer(playerid);
             }
             else
             {
-                player[playerid][E_PLAYER_ATTEMPS]++;
-                if(player[playerid][E_PLAYER_ATTEMPS] >= MAX_ATTEMPS_PASSWORD) return Kick(playerid);
-
+                if(++player[playerid][E_PLAYER_ATTEMPS] >= MAX_ATTEMPS_PASSWORD)
+                {
+                    SendClientMessagef(playerid, -1, "* Você foi expulso do servidor por errar a senha %i vezes.", MAX_ATTEMPS_PASSWORD);
+                    return Kick(playerid);
+                }
                 new dialog[90];
                 format(dialog, sizeof(dialog), "{FFFFFF}Insira sua senha para conectar-se:\n\n{FF0000}* Senha incorreta (%i/%i).", player[playerid][E_PLAYER_ATTEMPS], MAX_ATTEMPS_PASSWORD);
                 ShowPlayerDialog(playerid, DIALOG_PLAYER_CONNECT, DIALOG_STYLE_PASSWORD, "Conectando", dialog, "Conectar", "Sair");
-            }
+			}
         }
     }
     return 1;
 }
 
 // -----------------------------------------------------------------------------
+
+// UTILS:
+
+ClearLines(playerid, lines)
+    for(new i; i != lines; ++i)
+        SendClientMessage(playerid, -1, #);
 
 formatFile(playerid)
 {
@@ -315,19 +300,51 @@ formatTime()
     return output;
 }
 
-ClearLines(playerid, lines)
-    for(new i; i != lines; ++i)
-        SendClientMessage(playerid, -1, #);
+// STOCKS:
 
-// -----------------------------------------------------------------------------
-
-IsPlayerLogged(playerid)
+stock SetPlayerLogged(playerid, bool:value)
 {
-	if(!(0 <= playerid < MAX_PLAYERS))
-	    return 0;
-	    
+    player[playerid][E_PLAYER_LOGGED] = value;
+}
+
+stock IsPlayerLogged(playerid)
+{
 	return player[playerid][E_PLAYER_LOGGED];
 }
+
+stock SetPlayerGender(playerid, Gender:id)
+{
+    player[playerid][E_PLAYER_GENDER] = id;
+}
+
+stock Gender:GetPlayerGender(playerid)
+{
+    return player[playerid][E_PLAYER_GENDER];
+}
+
+stock GetPlayerGenderName(playerid, bool:lower = false)
+{
+	new name[16];
+
+	switch(GetPlayerGender(playerid))
+	{
+	    case MALE_GENDER_ID:
+	        name = "Masculino";
+
+	    case FEMALE_GENDER_ID:
+	        name = "Feminino";
+
+		default:
+		    name = "Não Informado";
+	}
+
+	if(lower)
+	    name[0] = tolower(name[0]);
+
+	return name;
+}
+
+// SAVE & RESET:
 
 SavePlayerData(playerid)
 {
@@ -376,6 +393,7 @@ ResetPlayerData(playerid)
     SetPlayerWantedLevel(playerid, 0);
     SetPlayerHealth(playerid, 100.0);
     SetPlayerArmour(playerid, 0.0);
+    SetPlayerLogged(playerid, false);
 
     player[playerid][E_PLAYER_GENDER] = INVALID_GENDER_ID;
     player[playerid][E_PLAYER_ADMIN] = INVALID_ADMIN_ID;
@@ -383,5 +401,4 @@ ResetPlayerData(playerid)
 
     player[playerid][E_PLAYER_HUNGER] = player[playerid][E_PLAYER_THIRST] = player[playerid][E_PLAYER_ATTEMPS] = 0;
     player[playerid][E_PLAYER_X] = player[playerid][E_PLAYER_Y] = player[playerid][E_PLAYER_Z] = player[playerid][E_PLAYER_A] = 0.0;
-    player[playerid][E_PLAYER_LOGGED] = player[playerid][E_PLAYER_SPAWNED] = player[playerid][E_PLAYER_REGISTRED] = false;
 }
