@@ -309,7 +309,7 @@ stock SetPlayerLogged(playerid, bool:value)
 
 stock bool:IsPlayerLogged(playerid)
 {
-	return player[playerid][E_PLAYER_LOGGED];
+    return player[playerid][E_PLAYER_LOGGED];
 }
 
 stock SetPlayerGender(playerid, Gender:id)
