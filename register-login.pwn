@@ -1,17 +1,23 @@
 /*
 	-* DESCRIÇÃO *-
-	
+
 	    -> Não testado as novas mudanças;
 	    -> Esta versão usa funções disponíveis do OPEN.MP;
 
 	-* STOCKS *-
-	
-	    - SetPlayerLogged(playerid, bool:value)
-	    - SetPlayerGender(playerid, Gender:id)
 
-	    - bool:IsPlayerLogged(playerid)
-            - Gender:GetPlayerGender(playerid)
-            - GetPlayerGenderName(playerid, bool:lower = false)
+		- SetPlayerLogged(playerid, bool:value)
+		- SetPlayerGender(playerid, Gender:id)
+		- SetPlayerAdminRank(playerid, Admin:id)
+		- SetPlayerJob(playerid, Job:id)
+
+		- bool:IsPlayerLogged(playerid)
+		- Gender:GetPlayerGender(playerid)
+		- Admin:GetPlayerAdminRank(playerid)
+		- Job:GetPlayerJob(playerid)
+
+		- GetPlayerGenderName(playerid, bool:lower = false)
+		- GetPlayerAdminRankName(playerid, bool:lower = false)
 
 */
 
