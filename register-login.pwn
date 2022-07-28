@@ -2,7 +2,7 @@
 	-* DESCRIÇÃO *-
 	
 	    -> Não testado as novas mudanças;
-	    -> Esta versão usa funções disponíveis no OPEN.MP;
+	    -> Esta versão usa funções disponíveis do OPEN.MP;
 
 	-* STOCKS *-
 	
