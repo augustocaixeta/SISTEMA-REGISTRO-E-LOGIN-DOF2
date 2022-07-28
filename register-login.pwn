@@ -1,7 +1,7 @@
 /*
 
     * Não testado as novas mudanças;
-    * Esta versão usa funções das novas atualizações do OPEN.MP;
+    * Esta versão usa funções disponíveis no OPEN.MP;
 
 */
 
