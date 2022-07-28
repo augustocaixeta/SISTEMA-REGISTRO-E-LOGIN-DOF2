@@ -1,20 +1,17 @@
 /*
-
-    * Não testado as novas mudanças;
-    * Esta versão usa funções disponíveis no OPEN.MP;
-
-*/
-
-/*
+	-* DESCRIÇÃO *-
+	
+	    -> Não testado as novas mudanças;
+	    -> Esta versão usa funções disponíveis no OPEN.MP;
 
 	-* STOCKS *-
 	
-		- SetPlayerLogged(playerid, bool:value)
-		- SetPlayerGender(playerid, Gender:id)
+	    - SetPlayerLogged(playerid, bool:value)
+	    - SetPlayerGender(playerid, Gender:id)
 
-		- bool:IsPlayerLogged(playerid)
-		- Gender:GetPlayerGender(playerid)
-		- GetPlayerGenderName(playerid, bool:lower = false)
+	    - bool:IsPlayerLogged(playerid)
+            - Gender:GetPlayerGender(playerid)
+            - GetPlayerGenderName(playerid, bool:lower = false)
 
 */
 
