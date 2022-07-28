@@ -5,6 +5,19 @@
 
 */
 
+/*
+
+	-* STOCKS *-
+	
+		- SetPlayerLogged(playerid, bool:value)
+		- SetPlayerGender(playerid, Gender:id)
+
+		- bool:IsPlayerLogged(playerid)
+		- Gender:GetPlayerGender(playerid)
+		- GetPlayerGenderName(playerid, bool:lower = false)
+
+*/
+
 #include <a_samp>
 #include <a_omp>
 #include <dof2>
