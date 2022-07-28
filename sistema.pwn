@@ -307,7 +307,7 @@ stock SetPlayerLogged(playerid, bool:value)
     player[playerid][E_PLAYER_LOGGED] = value;
 }
 
-stock IsPlayerLogged(playerid)
+stock bool:IsPlayerLogged(playerid)
 {
 	return player[playerid][E_PLAYER_LOGGED];
 }
@@ -324,24 +324,24 @@ stock Gender:GetPlayerGender(playerid)
 
 stock GetPlayerGenderName(playerid, bool:lower = false)
 {
-	new name[16];
+    new name[16];
 
-	switch(GetPlayerGender(playerid))
-	{
-	    case MALE_GENDER_ID:
-	        name = "Masculino";
+    switch(GetPlayerGender(playerid))
+    {
+        case MALE_GENDER_ID:
+            name = "Masculino";
 
-	    case FEMALE_GENDER_ID:
-	        name = "Feminino";
+        case FEMALE_GENDER_ID:
+            name = "Feminino";
 
-		default:
-		    name = "Não Informado";
-	}
+        default:
+            name = "Não Informado";
+    }
 
-	if(lower)
-	    name[0] = tolower(name[0]);
+    if(lower)
+        name[0] = tolower(name[0]);
 
-	return name;
+    return name;
 }
 
 // SAVE & RESET:
