@@ -1,16 +1,16 @@
 /*
 	-* DESCRIÇÃO *-
-	
+
 	    -> Não testado as novas mudanças;
 	    -> Esta versão usa funções disponíveis do OPEN.MP;
-	    
+
 	-* STOCKS *-
-	    
+
 	    - SetPlayerLogged(playerid, bool:value)
 	    - SetPlayerGender(playerid, Gender:id)
 	    - SetPlayerAdminRank(playerid, Admin:id)
 	    - SetPlayerJob(playerid, Job:id)
-	    
+
 	    - bool:IsPlayerLogged(playerid)
 	    - Gender:GetPlayerGender(playerid)
 	    - Admin:GetPlayerAdminRank(playerid)
@@ -29,9 +29,9 @@
 #define MIN_PASSWORD                		4   	// Mín. caracteres da senha
 #define MAX_ATTEMPS_PASSWORD        		3   	// Tentativas de acertar a senha
 
-#define BEGINNER_SKIN_MALE       		60
+#define BEGINNER_SKIN_MALE       			60
 #define BEGINNER_SKIN_FEMALE        		56
-#define BEGINNER_START_MONEY     		1000
+#define BEGINNER_START_MONEY     			1000
 
 #define BEGINNER_START_X              		1958.3783
 #define BEGINNER_START_Y              		1343.1572
@@ -103,41 +103,6 @@ ClearLines(playerid, lines)
     for(new i; i != lines; ++i)
         SendClientMessage(playerid, -1, #);
 
-formatFile(playerid)
-{
-    new file[16 + MAX_PLAYER_NAME];
-    format(file, sizeof(file), "Contas/%s.ini", formatName(playerid));
-    return file;
-}
-
-formatName(playerid)
-{
-    new name[MAX_PLAYER_NAME];
-    GetPlayerName(playerid, name, MAX_PLAYER_NAME);
-    return name;
-}
-
-formatIP(playerid)
-{
-    new ip[16];
-    GetPlayerIp(playerid, ip, 16);
-    return ip;
-}
-
-Float:formatHealth(playerid)
-{
-    new Float:health;
-    GetPlayerHealth(playerid, health);
-    return health;
-}
-
-Float:formatArmour(playerid)
-{
-    new Float:armour;
-    GetPlayerArmour(playerid, armour);
-    return armour;
-}
-
 formatTime()
 {
     new output[24], date[3], hour[3];
@@ -145,6 +110,41 @@ formatTime()
     gettime(hour[0], hour[1], hour[2]);
     format(output, sizeof(output), "%02d/%02d/%04d - %02d:%02d:%02d", date[0], date[1], date[2], hour[0], hour[1], hour[2]);
     return output;
+}
+
+formatFile(playerid)
+{
+    new file[12 + (MAX_PLAYER_NAME + 1)];
+    format(file, sizeof(file), "Contas/%s.ini", GetPlayerNamef(playerid));
+    return file;
+}
+
+GetPlayerNamef(playerid)
+{
+    new name[MAX_PLAYER_NAME + 1];
+    GetPlayerName(playerid, name, sizeof(name));
+    return name;
+}
+
+GetPlayerIpf(playerid)
+{
+    new ip[16];
+    GetPlayerIp(playerid, ip, sizeof(ip));
+    return ip;
+}
+
+Float:GetPlayerHealthf(playerid)
+{
+    new Float:health;
+    GetPlayerHealth(playerid, health);
+    return health;
+}
+
+Float:GetPlayerArmourf(playerid)
+{
+    new Float:armour;
+    GetPlayerArmour(playerid, armour);
+    return armour;
 }
 
 // -* STOCKS: *-
@@ -261,7 +261,7 @@ public OnPlayerSpawn(playerid)
     if(!IsPlayerSpawned(playerid))
     {
     	ClearLines(playerid, 50);
-        SendClientMessagef(playerid, -1, "{98FB98}* {FFFFFF}Olá {98FB98}%s{FFFFFF}, seu último login no servidor foi: {98FB98}%s{FFFFFF}.", formatName(playerid), player[playerid][E_PLAYER_LASTLOGIN]);
+        SendClientMessagef(playerid, -1, "{98FB98}* {FFFFFF}Olá {98FB98}%s{FFFFFF}, seu último login no servidor foi: {98FB98}%s{FFFFFF}.", GetPlayerNamef(playerid), player[playerid][E_PLAYER_LASTLOGIN]);
         SendClientMessage(playerid, -1, "{98FB98}* {FFFFFF}Caso tenha dúvidas e precisar de ajuda use os comandos {98FB98}/ajuda {FFFFFF}e {98FB98}/comandos{FFFFFF}.");
     }
     return 1;
@@ -304,7 +304,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
                 DOF2::CreateFile(formatFile(playerid));
                 DOF2::SetString(formatFile(playerid), "password", player[playerid][E_PLAYER_PASSWORD]);
                 DOF2::SetString(formatFile(playerid), "last_login", player[playerid][E_PLAYER_LASTLOGIN]);
-                DOF2::SetString(formatFile(playerid), "ip", formatIP(playerid));
+                DOF2::SetString(formatFile(playerid), "ip", GetPlayerIpf(playerid));
                 DOF2::SetInt(formatFile(playerid), "money", 0);
                 DOF2::SetInt(formatFile(playerid), "score", 0);
                 DOF2::SetInt(formatFile(playerid), "skin", 0);
@@ -336,7 +336,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
         case DIALOG_PLAYER_GENDER:
         {
             ClearLines(playerid, 50);
-            SendClientMessagef(playerid, -1, "{98FB98}* {FFFFFF}Bem-vindo(a) {98FB98}%s{FFFFFF}, pela primeira vez ao nosso servidor.", formatName(playerid));
+            SendClientMessagef(playerid, -1, "{98FB98}* {FFFFFF}Bem-vindo(a) {98FB98}%s{FFFFFF}, pela primeira vez ao nosso servidor.", GetPlayerNamef(playerid));
             SendClientMessage(playerid, -1, "{98FB98}* {FFFFFF}Caso tenha dúvidas e precisar de ajuda use os comandos {98FB98}/ajuda {FFFFFF}e {98FB98}/comandos{FFFFFF}.");
 
             SetPlayerLogged(playerid, true);
@@ -418,15 +418,15 @@ SavePlayerData(playerid)
             GetPlayerFacingAngle(playerid, player[playerid][E_PLAYER_A]);
 
             DOF2::SetString(formatFile(playerid), "last_login", player[playerid][E_PLAYER_LASTLOGIN]);
-            DOF2::SetString(formatFile(playerid), "ip", formatIP(playerid));
+            DOF2::SetString(formatFile(playerid), "ip", GetPlayerIpf(playerid));
             DOF2::SetInt(formatFile(playerid), "money", GetPlayerMoney(playerid));
             DOF2::SetInt(formatFile(playerid), "score", GetPlayerScore(playerid));
             DOF2::SetInt(formatFile(playerid), "skin", GetPlayerSkin(playerid));
             DOF2::SetInt(formatFile(playerid), "interior", GetPlayerInterior(playerid));
             DOF2::SetInt(formatFile(playerid), "world", GetPlayerVirtualWorld(playerid));
             DOF2::SetInt(formatFile(playerid), "wanted", GetPlayerWantedLevel(playerid));
-            DOF2::SetFloat(formatFile(playerid), "health", formatHealth(playerid));
-            DOF2::SetFloat(formatFile(playerid), "armour", formatArmour(playerid));
+            DOF2::SetFloat(formatFile(playerid), "health", GetPlayerHealthf(playerid));
+            DOF2::SetFloat(formatFile(playerid), "armour", GetPlayerArmourf(playerid));
 
             DOF2::SetInt(formatFile(playerid), "gender", _:player[playerid][E_PLAYER_GENDER]);
             DOF2::SetInt(formatFile(playerid), "admin", _:player[playerid][E_PLAYER_ADMIN]);
