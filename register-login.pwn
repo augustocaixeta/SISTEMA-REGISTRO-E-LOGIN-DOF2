@@ -471,18 +471,18 @@ ResetPlayerData(playerid)
     SetPlayerArmour(playerid, 0.0);
     SetPlayerLogged(playerid, false);
 
-    player[playerid][E_PLAYER_GENDER] 	= INVALID_GENDER_ID;
-    player[playerid][E_PLAYER_ADMIN] 	= INVALID_ADMIN_ID;
-    player[playerid][E_PLAYER_JOB] 	 	= INVALID_JOB_ID;
+    player[playerid][E_PLAYER_GENDER] 	  = INVALID_GENDER_ID;
+    player[playerid][E_PLAYER_ADMIN] 	  = INVALID_ADMIN_ID;
+    player[playerid][E_PLAYER_JOB] 	  = INVALID_JOB_ID;
 
-    player[playerid][E_PLAYER_HUNGER] 	= 0.0;
-	player[playerid][E_PLAYER_THIRST] 	= 0.0;
-	player[playerid][E_PLAYER_SLEEP] 	= 0.0;
+    player[playerid][E_PLAYER_HUNGER] 	  = 0.0;
+    player[playerid][E_PLAYER_THIRST] 	  = 0.0;
+    player[playerid][E_PLAYER_SLEEP]      = 0.0;
 
-	player[playerid][E_PLAYER_ATTEMPS] 	= 0;
+    player[playerid][E_PLAYER_ATTEMPS]    = 0;
 	
-    player[playerid][E_PLAYER_X] 		= 0.0;
-	player[playerid][E_PLAYER_Y] 		= 0.0;
-	player[playerid][E_PLAYER_Z]		= 0.0;
-	player[playerid][E_PLAYER_A]		= 0.0;
+    player[playerid][E_PLAYER_X]          = 0.0;
+    player[playerid][E_PLAYER_Y]          = 0.0;
+    player[playerid][E_PLAYER_Z]          = 0.0;
+    player[playerid][E_PLAYER_A]          = 0.0;
 }
