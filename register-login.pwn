@@ -1,24 +1,18 @@
 /*
 	-* DESCRIÇÃO *-
-
 	    -> Não testado as novas mudanças;
 	    -> Esta versão usa funções disponíveis do OPEN.MP;
-
 	-* STOCKS *-
-
 		- SetPlayerLogged(playerid, bool:value)
 		- SetPlayerGender(playerid, Gender:id)
 		- SetPlayerAdminRank(playerid, Admin:id)
 		- SetPlayerJob(playerid, Job:id)
-
 		- bool:IsPlayerLogged(playerid)
 		- Gender:GetPlayerGender(playerid)
 		- Admin:GetPlayerAdminRank(playerid)
 		- Job:GetPlayerJob(playerid)
-
 		- GetPlayerGenderName(playerid, bool:lower = false)
 		- GetPlayerAdminRankName(playerid, bool:lower = false)
-
 */
 
 #include <a_samp>
@@ -98,6 +92,142 @@ enum E_PLAYER_DATA
 static player[MAX_PLAYERS][E_PLAYER_DATA];
 
 main(){}
+
+// -* UTILS: *-
+
+ClearLines(playerid, lines)
+    for(new i; i != lines; ++i)
+        SendClientMessage(playerid, -1, #);
+
+formatFile(playerid)
+{
+    new file[16 + MAX_PLAYER_NAME];
+    format(file, sizeof(file), "Contas/%s.ini", formatName(playerid));
+    return file;
+}
+
+formatName(playerid)
+{
+    new name[MAX_PLAYER_NAME];
+    GetPlayerName(playerid, name, MAX_PLAYER_NAME);
+    return name;
+}
+
+formatIP(playerid)
+{
+    new ip[16];
+    GetPlayerIp(playerid, ip, 16);
+    return ip;
+}
+
+Float:formatHealth(playerid)
+{
+    new Float:health;
+    GetPlayerHealth(playerid, health);
+    return health;
+}
+
+Float:formatArmour(playerid)
+{
+    new Float:armour;
+    GetPlayerArmour(playerid, armour);
+    return armour;
+}
+
+formatTime()
+{
+    new output[24], date[3], hour[3];
+    getdate(date[2], date[1], date[0]);
+    gettime(hour[0], hour[1], hour[2]);
+    format(output, sizeof(output), "%02d/%02d/%04d - %02d:%02d:%02d", date[0], date[1], date[2], hour[0], hour[1], hour[2]);
+    return output;
+}
+
+// -* STOCKS: *-
+
+stock SetPlayerLogged(playerid, bool:value)
+{
+    player[playerid][E_PLAYER_LOGGED] = value;
+}
+
+stock bool:IsPlayerLogged(playerid)
+{
+    return player[playerid][E_PLAYER_LOGGED];
+}
+
+stock SetPlayerGender(playerid, Gender:id)
+{
+    player[playerid][E_PLAYER_GENDER] = id;
+}
+
+stock Gender:GetPlayerGender(playerid)
+{
+    return player[playerid][E_PLAYER_GENDER];
+}
+
+stock GetPlayerGenderName(playerid, bool:lower = false)
+{
+    new name[16];
+
+    switch(GetPlayerGender(playerid))
+    {
+        case MALE_GENDER_ID:
+            name = "Masculino";
+
+        case FEMALE_GENDER_ID:
+            name = "Feminino";
+
+        default:
+            name = "Não Informado";
+    }
+
+    if(lower)
+        name[0] = tolower(name[0]);
+
+    return name;
+}
+
+stock SetPlayerAdminRank(playerid, Admin:id)
+{
+    player[playerid][E_PLAYER_ADMIN] = id;
+}
+
+stock Admin:GetPlayerAdminRank(playerid)
+{
+    return player[playerid][E_PLAYER_ADMIN];
+}
+
+stock SetPlayerJob(playerid, Job:id)
+{
+    player[playerid][E_PLAYER_JOB] = id;
+}
+
+stock Job:GetPlayerJob(playerid)
+{
+    return player[playerid][E_PLAYER_JOB];
+}
+
+stock SetPlayerHunger(playerid, value)
+{
+    player[playerid][E_PLAYER_HUNGER] = value;
+}
+
+stock GetPlayerHunger(playerid)
+{
+    return player[playerid][E_PLAYER_HUNGER];
+}
+
+stock SetPlayerThirst(playerid, value)
+{
+    player[playerid][E_PLAYER_THIRST] = value;
+}
+
+stock GetPlayerThirst(playerid)
+{
+    return player[playerid][E_PLAYER_THIRST];
+}
+
+// -* CALLBACKS: *-
 
 public OnGameModeExit()
 {
@@ -271,103 +401,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
     return 1;
 }
 
-// -----------------------------------------------------------------------------
-
-// UTILS:
-
-ClearLines(playerid, lines)
-    for(new i; i != lines; ++i)
-        SendClientMessage(playerid, -1, #);
-
-formatFile(playerid)
-{
-    new file[16 + MAX_PLAYER_NAME];
-    format(file, sizeof(file), "Contas/%s.ini", formatName(playerid));
-    return file;
-}
-
-formatName(playerid)
-{
-    new name[MAX_PLAYER_NAME];
-    GetPlayerName(playerid, name, MAX_PLAYER_NAME);
-    return name;
-}
-
-formatIP(playerid)
-{
-    new ip[16];
-    GetPlayerIp(playerid, ip, 16);
-    return ip;
-}
-
-Float:formatHealth(playerid)
-{
-    new Float:health;
-    GetPlayerHealth(playerid, health);
-    return health;
-}
-
-Float:formatArmour(playerid)
-{
-    new Float:armour;
-    GetPlayerArmour(playerid, armour);
-    return armour;
-}
-
-formatTime()
-{
-    new output[24], date[3], hour[3];
-    getdate(date[2], date[1], date[0]);
-    gettime(hour[0], hour[1], hour[2]);
-    format(output, sizeof(output), "%02d/%02d/%04d - %02d:%02d:%02d", date[0], date[1], date[2], hour[0], hour[1], hour[2]);
-    return output;
-}
-
-// STOCKS:
-
-stock SetPlayerLogged(playerid, bool:value)
-{
-    player[playerid][E_PLAYER_LOGGED] = value;
-}
-
-stock bool:IsPlayerLogged(playerid)
-{
-    return player[playerid][E_PLAYER_LOGGED];
-}
-
-stock SetPlayerGender(playerid, Gender:id)
-{
-    player[playerid][E_PLAYER_GENDER] = id;
-}
-
-stock Gender:GetPlayerGender(playerid)
-{
-    return player[playerid][E_PLAYER_GENDER];
-}
-
-stock GetPlayerGenderName(playerid, bool:lower = false)
-{
-    new name[16];
-
-    switch(GetPlayerGender(playerid))
-    {
-        case MALE_GENDER_ID:
-            name = "Masculino";
-
-        case FEMALE_GENDER_ID:
-            name = "Feminino";
-
-        default:
-            name = "Não Informado";
-    }
-
-    if(lower)
-        name[0] = tolower(name[0]);
-
-    return name;
-}
-
-// SAVE & RESET:
+// -* SAVE & RESET *-
 
 SavePlayerData(playerid)
 {
