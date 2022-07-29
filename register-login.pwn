@@ -29,9 +29,9 @@
 #define MIN_PASSWORD                		4   	// Mín. caracteres da senha
 #define MAX_ATTEMPS_PASSWORD        		3   	// Tentativas de acertar a senha
 
-#define BEGINNER_SKIN_MALE       			60
+#define BEGINNER_SKIN_MALE       		60
 #define BEGINNER_SKIN_FEMALE        		56
-#define BEGINNER_START_MONEY     			1000
+#define BEGINNER_START_MONEY     		1000
 
 #define BEGINNER_START_X              		1958.3783
 #define BEGINNER_START_Y              		1343.1572
