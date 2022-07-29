@@ -29,9 +29,9 @@
 #define MIN_PASSWORD                		4   	// Mín. caracteres da senha
 #define MAX_ATTEMPS_PASSWORD        		3   	// Tentativas de acertar a senha
 
-#define BEGINNER_SKIN_MALE       		60
+#define BEGINNER_SKIN_MALE       			60
 #define BEGINNER_SKIN_FEMALE        		56
-#define BEGINNER_START_MONEY     		1000
+#define BEGINNER_START_MONEY     			1000
 
 #define BEGINNER_START_X              		1958.3783
 #define BEGINNER_START_Y              		1343.1572
@@ -81,8 +81,10 @@ enum E_PLAYER_DATA
     Admin:E_PLAYER_ADMIN,
     Job:E_PLAYER_JOB,
 
-    E_PLAYER_HUNGER,
-    E_PLAYER_THIRST,
+    Float:E_PLAYER_HUNGER,
+    Float:E_PLAYER_THIRST,
+    Float:E_PLAYER_SLEEP,
+
     E_PLAYER_ATTEMPS,
 
     bool:E_PLAYER_LOGGED,
@@ -211,24 +213,34 @@ stock Job:GetPlayerJob(playerid)
     return player[playerid][E_PLAYER_JOB];
 }
 
-stock SetPlayerHunger(playerid, value)
+stock SetPlayerHunger(playerid, Float:value)
 {
     player[playerid][E_PLAYER_HUNGER] = value;
 }
 
-stock GetPlayerHunger(playerid)
+stock Float:GetPlayerHunger(playerid)
 {
     return player[playerid][E_PLAYER_HUNGER];
 }
 
-stock SetPlayerThirst(playerid, value)
+stock SetPlayerThirst(playerid, Float:value)
 {
     player[playerid][E_PLAYER_THIRST] = value;
 }
 
-stock GetPlayerThirst(playerid)
+stock Float:GetPlayerThirst(playerid)
 {
     return player[playerid][E_PLAYER_THIRST];
+}
+
+stock SetPlayerSleep(playerid, Float:value)
+{
+    player[playerid][E_PLAYER_SLEEP] = value;
+}
+
+stock Float:GetPlayerSleep(playerid)
+{
+    return player[playerid][E_PLAYER_SLEEP];
 }
 
 // -* CALLBACKS: *-
@@ -318,8 +330,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
                 DOF2::SetInt(formatFile(playerid), "admin", _:(player[playerid][E_PLAYER_ADMIN] = INVALID_ADMIN_ID));
                 DOF2::SetInt(formatFile(playerid), "job", _:(player[playerid][E_PLAYER_JOB] = INVALID_JOB_ID));
 
-                DOF2::SetInt(formatFile(playerid), "hunger", player[playerid][E_PLAYER_HUNGER] = 30);
-                DOF2::SetInt(formatFile(playerid), "thirst", player[playerid][E_PLAYER_THIRST] = 30);
+                DOF2::SetFloat(formatFile(playerid), "hunger", player[playerid][E_PLAYER_HUNGER] = 30.0);
+                DOF2::SetFloat(formatFile(playerid), "thirst", player[playerid][E_PLAYER_THIRST] = 30.0);
+                DOF2::SetFloat(formatFile(playerid), "sleep", player[playerid][E_PLAYER_SLEEP] = 100.0);
 
                 DOF2::SetFloat(formatFile(playerid), "x", player[playerid][E_PLAYER_X] = BEGINNER_START_X);
                 DOF2::SetFloat(formatFile(playerid), "y", player[playerid][E_PLAYER_Y] = BEGINNER_START_Y);
@@ -374,8 +387,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
                 player[playerid][E_PLAYER_ADMIN] = Admin:DOF2::GetInt(formatFile(playerid), "admin");
                 player[playerid][E_PLAYER_JOB] = Job:DOF2::GetInt(formatFile(playerid), "job");
 
-                player[playerid][E_PLAYER_HUNGER] = DOF2::GetInt(formatFile(playerid), "hunger");
-                player[playerid][E_PLAYER_THIRST] = DOF2::GetInt(formatFile(playerid), "thirst");
+                player[playerid][E_PLAYER_HUNGER] = DOF2::GetFloat(formatFile(playerid), "hunger");
+                player[playerid][E_PLAYER_THIRST] = DOF2::GetFloat(formatFile(playerid), "thirst");
+                player[playerid][E_PLAYER_SLEEP] = DOF2::GetFloat(formatFile(playerid), "sleep");
 
                 player[playerid][E_PLAYER_X] = DOF2::GetFloat(formatFile(playerid), "x");
                 player[playerid][E_PLAYER_Y] = DOF2::GetFloat(formatFile(playerid), "y");
@@ -432,8 +446,9 @@ SavePlayerData(playerid)
             DOF2::SetInt(formatFile(playerid), "admin", _:player[playerid][E_PLAYER_ADMIN]);
             DOF2::SetInt(formatFile(playerid), "job", _:player[playerid][E_PLAYER_JOB]);
 
-            DOF2::SetInt(formatFile(playerid), "hunger", player[playerid][E_PLAYER_HUNGER]);
-            DOF2::SetInt(formatFile(playerid), "thirst", player[playerid][E_PLAYER_THIRST]);
+            DOF2::SetFloat(formatFile(playerid), "hunger", player[playerid][E_PLAYER_HUNGER]);
+            DOF2::SetFloat(formatFile(playerid), "thirst", player[playerid][E_PLAYER_THIRST]);
+            DOF2::SetFloat(formatFile(playerid), "sleep", player[playerid][E_PLAYER_SLEEP]);
 
             DOF2::SetFloat(formatFile(playerid), "x", player[playerid][E_PLAYER_X]);
             DOF2::SetFloat(formatFile(playerid), "y", player[playerid][E_PLAYER_Y]);
@@ -456,10 +471,18 @@ ResetPlayerData(playerid)
     SetPlayerArmour(playerid, 0.0);
     SetPlayerLogged(playerid, false);
 
-    player[playerid][E_PLAYER_GENDER] = INVALID_GENDER_ID;
-    player[playerid][E_PLAYER_ADMIN] = INVALID_ADMIN_ID;
-    player[playerid][E_PLAYER_JOB] = INVALID_JOB_ID;
+    player[playerid][E_PLAYER_GENDER] 	= INVALID_GENDER_ID;
+    player[playerid][E_PLAYER_ADMIN] 	= INVALID_ADMIN_ID;
+    player[playerid][E_PLAYER_JOB] 	 	= INVALID_JOB_ID;
 
-    player[playerid][E_PLAYER_HUNGER] = player[playerid][E_PLAYER_THIRST] = player[playerid][E_PLAYER_ATTEMPS] = 0;
-    player[playerid][E_PLAYER_X] = player[playerid][E_PLAYER_Y] = player[playerid][E_PLAYER_Z] = player[playerid][E_PLAYER_A] = 0.0;
+    player[playerid][E_PLAYER_HUNGER] 	= 0.0;
+	player[playerid][E_PLAYER_THIRST] 	= 0.0;
+	player[playerid][E_PLAYER_SLEEP] 	= 0.0;
+
+	player[playerid][E_PLAYER_ATTEMPS] 	= 0;
+	
+    player[playerid][E_PLAYER_X] 		= 0.0;
+	player[playerid][E_PLAYER_Y] 		= 0.0;
+	player[playerid][E_PLAYER_Z]		= 0.0;
+	player[playerid][E_PLAYER_A]		= 0.0;
 }
